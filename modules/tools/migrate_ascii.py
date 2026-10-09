@@ -1,10 +1,10 @@
 """Preview ASCII extraction changes and migrate only unchanged translations."""
 
-import argparse
 from copy import deepcopy
 import hashlib
 import json
 from pathlib import Path
+from typing import Callable
 
 
 def text_records(document: dict) -> dict[str, dict]:
@@ -119,4 +119,46 @@ def prepare_migration(source: bytes, old_info: dict, old_lang: dict,
     report["safe_to_write"] = not report["review_required"]
     return info, lang, report
 
+
+def run_migration(
+    game: str,
+    decode_document: Callable,
+    source_mes: Path,
+    info_json: Path,
+    lang_json: Path,
+    output_dir: Path,
+) -> int:
+    """Build a new game document and preserve translations at unchanged ranges."""
+    old_info = json.loads(info_json.read_text(encoding="utf-8"))
+    old_lang = json.loads(lang_json.read_text(encoding="utf-8"))
+    if old_lang.get("source_info") != info_json.name:
+        raise ValueError("lang references a different info file")
+    if not all(str(document.get("format", "")).startswith(game + "-")
+               for document in (old_info, old_lang)):
+        raise ValueError("game and document formats differ")
+    new_info = decode_document(source_mes, old_info["source"], structured_ascii=True)
+    new_info["format"] = old_info["format"]
+    info, lang, report = prepare_migration(source_mes.read_bytes(), old_info, old_lang, new_info)
+    outputs = {"migration_report.json": report}
+    if report["safe_to_write"]:
+        outputs.update({info_json.name: info, lang_json.name: lang})
+    if len({info_json.name, lang_json.name, "migration_report.json"}) != 3:
+        raise ValueError("output filenames collide")
+    if output_dir.resolve() in {info_json.resolve().parent, lang_json.resolve().parent}:
+        raise ValueError("migration requires a separate output directory")
+    for name in outputs:
+        if (output_dir / name).exists():
+            raise FileExistsError(output_dir / name)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    for name, document in outputs.items():
+        (output_dir / name).write_text(
+            json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+        )
+    print(json.dumps({
+        "safe_to_write": report["safe_to_write"],
+        "changed_ranges": len(report["changes"]),
+        "preserved": len(report["preserved"]),
+        "review_required": len(report["review_required"]),
+    }))
+    return 0 if report["safe_to_write"] else 1
 

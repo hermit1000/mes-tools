@@ -5,6 +5,8 @@
 Dead of the Brain PC-98판의 ADV98 MES 스크립트를 추출하고 번역본으로
 재구성하는 코드입니다. 다른 ADV98 게임과의 호환성은 보장하지 않습니다.
 
+번역 작업 전 [공통 지침](../../../docs/translation_guidelines.md)과 [DOB1 번역 규칙](TRANSLATION_GUIDELINES.md)을 확인합니다.
+
 ## 현재 사용 파일
 
 - `decode_mes.py`: MES 해석 및 단일/일괄 일본어 JSON 추출

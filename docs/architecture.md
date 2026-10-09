@@ -7,7 +7,7 @@
 | 공통 코덱 | ADV98 토큰, ASCII, 문자 코드, 패치, 대사 사전 후보 집계 | `modules/adv_common/` |
 | 공통 MES 작업 | lexer, decoder, encoder, 배치 실행, 편집용 레코드 생성 | `modules/adv_common/mes_*.py` |
 | 공통 작업 도구 | 감사, 번역 묶음, ASCII 이전 비교 | `modules/tools/` |
-| 게임별 ASCII 이전 CLI | 게임별 JSON 생성기 선택 | `gspecific/migrate_ascii.py` |
+| 게임별 ASCII 이전 CLI | 해당 게임의 JSON 생성기 연결 | `gspecific/{dob1,dob2}/adv98_mes/migrate_ascii.py` |
 | 게임별 어댑터 | 각 게임의 레코드 구조, 제어 코드, 인코딩 제약, 설정 JSON | `gspecific/<game>/adv98_mes/` |
 | CD판 컨테이너 | Necronomicon CD의 추출·재포장·실행 환경 | `gspecific/necronomicon/adv98_mes_cd/` |
 | 공통 이미지 코덱 | 인덱스 이미지, planar 변환, ADV98 GPC, PNG 저장 | `modules/pc98_image/` |

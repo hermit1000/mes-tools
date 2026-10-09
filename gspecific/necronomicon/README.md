@@ -1,5 +1,7 @@
 # Necronomicon (PC-98)
 
+MES 번역은 [공통 지침](../../docs/translation_guidelines.md)과 [Necronomicon 번역 규칙](TRANSLATION_RULES.md)을 따른다.
+
 Necronomicon의 `MES`는 기존 ADV98 계열과 같은 압축 문자·제어 코드 구조를
 사용한다. 디코더는 DOB2의 저수준 해석기를 재사용하지만, Necronomicon 전용
 `info/lang` 형식과 `「화자」` 대화 판정을 사용한다.

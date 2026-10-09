@@ -16,7 +16,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-from modules.adv_common.ascii import find_ascii_spans as _ascii_spans
 from modules.adv_common.mes_decoder import decode_mes as decode_common_mes, make_records
 
 

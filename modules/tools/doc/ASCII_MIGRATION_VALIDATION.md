@@ -28,7 +28,7 @@ raw_hex가 없는 기존 JSON에는 이전 검증 경로가 유지된다.
 ## 기존 번역 이전
 
 ```powershell
-python -m gspecific.migrate_ascii dob2 ORIGINAL.MES ORIGINAL.MES_info.json ORIGINAL.MES_lang.json NEW_DIRECTORY
+python -m gspecific.dob2.adv98_mes.migrate_ascii ORIGINAL.MES ORIGINAL.MES_info.json ORIGINAL.MES_lang.json NEW_DIRECTORY
 ```
 
 첫 인수는 `dob1` 또는 `dob2`다. 새 출력 디렉터리는 기존 info/lang과 분리해야 하며

@@ -16,6 +16,7 @@ By default this reads `C:\work_han\workspace2\jpn-pc98\MES` and writes
 ## Translation tools
 
 Translation and encoding conventions are documented in
+the [shared translation guide](../../docs/translation_guidelines.md) and
 [`TRANSLATION_RULES.md`](TRANSLATION_RULES.md).
 
 To build the mixed font, which keeps `anex86.bmp` for non-Hangul glyphs and

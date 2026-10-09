@@ -1,5 +1,7 @@
 # Marine Philt 이미지 도구
 
+MES 번역은 [공통 지침](../../docs/translation_guidelines.md)과 [Marine Philt 번역 지침](adv98_mes/TRANSLATION_GUIDELINES.md)을 따른다.
+
 GPC 인코딩·디코딩은 `modules.pc98_image.formats.adv98_gpc`를 사용한다.
 `gspecific.marine_philt.gpc`는 파일 목록과 MES 출력 모드를 선택하고
 `modules.pc98_image.adv98_artifacts.write_artifacts`로 생성물을 저장한다.

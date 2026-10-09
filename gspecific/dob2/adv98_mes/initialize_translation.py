@@ -81,7 +81,7 @@ def main() -> int:
                 raise ValueError(f"source info reference mismatch: {source.name}")
             document, lang, report = prepare_migration(source.read_bytes(), previous_info, previous, document)
             if not report["safe_to_write"]:
-                raise ValueError(f"{source.name}: changed translation ranges require review; use gspecific.migrate_ascii")
+                raise ValueError(f"{source.name}: changed translation ranges require review; use gspecific.dob2.adv98_mes.migrate_ascii")
         planned.append((info_path, lang_path, document, lang))
     # Validate every existing pair before overwriting any file in this batch.
     output_dir.mkdir(parents=True, exist_ok=True)

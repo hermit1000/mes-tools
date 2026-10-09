@@ -44,7 +44,8 @@ DOB1/DOB2의 JSON 생성은 확인된 `21 <printable ASCII> 00` 출력을 기본
 `--no-structured-ascii`를 지정한다. 저수준 `decode_mes` 함수의 기본값은
 기존 인코더·분석 도구 호환성을 위해 그대로 유지한다.
 
-기존 번역을 옮길 때는 `python -m gspecific.migrate_ascii`
+기존 번역을 옮길 때는 `python -m gspecific.dob1.adv98_mes.migrate_ascii` 또는
+`python -m gspecific.dob2.adv98_mes.migrate_ascii`
 도구를 사용한다. 변경된 번역 범위가 있으면 보고서만 생성하며 원문과
 번역을 자동 재배치하지 않는다. DOB2 초기화의 `--force`도 동일 검증을
 거치고, 모든 파일의 사전 검증이 끝나기 전에 기존 JSON을 쓰지 않는다.

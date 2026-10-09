@@ -12,7 +12,6 @@ from pathlib import Path
 
 from modules.resources import default_font_table
 
-from modules.adv_common.ascii import resolve_ascii_and_gaiji
 from modules.adv_common.text import load_font_codes
 from modules.adv_common.tokens import verify_tokens
 from modules.adv_common.mes_lexer import decode_mes as decode_lexical_mes, make_readable_records

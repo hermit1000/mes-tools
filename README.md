@@ -25,7 +25,7 @@ PC-98 게임의 MES 텍스트 추출, 번역 데이터 관리, 재인코딩을 �
 | 호출 코드 | 참조 코드 |
 | --- | --- |
 | `modules/tools/audit_games.py` | `modules.adv_common`의 MES 분석·인코딩 함수 |
-| `gspecific/migrate_ascii.py` | 게임별 JSON 생성기와 `modules.tools.migrate_ascii` |
+| 게임별 `adv98_mes/migrate_ascii.py` | 해당 게임의 JSON 생성기와 `modules.tools.migrate_ascii` |
 | DOB1, DOB2, Dracula, Marine Philt, Necronomicon | `modules.adv_common`의 MES lexer·decoder·encoder |
 | Necronomicon | 같은 게임의 `system_mec.py`, 공통 `modules/adv_common` |
 | Necronomicon CD판 | Necronomicon의 `adv98_mes`, 게임 폴더의 폰트 테이블과 remap JSON |
@@ -35,6 +35,10 @@ PC-98 게임의 MES 텍스트 추출, 번역 데이터 관리, 재인코딩을 �
 MES 스크립트는 게임 작업공간의 바이너리와 `*_info.json`, `*_lang.json`을 인자로 받습니다. 작업공간 인자를 생략하면 현재 폴더를 사용합니다.
 
 GPC 공통 코덱과 게임별 이미지 도구가 배포 패키지에 포함됩니다. 일부 제목 화면·폰트 생성 스크립트는 `pip install -e ".[image]"`의 추가 의존성이 필요합니다. 실행 파일 분석 도구는 [reverse_tools 안내](modules/reverse_tools/README.md)를 참조하세요. 이전 형식의 pickle 폰트 테이블도 외부 Python 패키지 없이 읽을 수 있습니다.
+
+## 번역 문서
+
+게임별 MES 번역 JSON 편집과 검증에 공통으로 적용하는 기준은 [번역 공통 지침](docs/translation_guidelines.md)에 정리했습니다. 화면 폭, 문자표, 매크로와 상태값은 해당 문서에서 연결한 게임별 지침을 따릅니다.
 
 ## 개발 환경
 

@@ -9,7 +9,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-from modules.adv_common.ascii import find_ascii_spans as _ascii_spans
 from modules.adv_common.mes_decoder import (
     consume_selector_parameters as _consume_marine_parameters,
     decode_mes as decode_common_mes,

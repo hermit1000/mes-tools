@@ -4,6 +4,8 @@ DOB2 PC-98판의 ADV98 MES를 분석하고 번역하기 위한 게임 전용 코
 DOB1과 기본 토큰 구조는 공유하지만, DOB2는 압축 히라가나와 실제 ASCII
 문자열이 같은 바이트 범위를 사용하므로 별도의 디코더가 필요합니다.
 
+번역 JSON 편집과 검증에는 [MES 번역 공통 지침](../../../docs/translation_guidelines.md)을 함께 적용합니다. DOB2의 화자 표기와 원문 유지 방식은 아래 설명을 따릅니다.
+
 현재 `decode_mes.py`는 다음을 지원합니다.
 
 - MES 전체 바이트의 무손실 lexical tokenization 검증
