@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mes-tools"
+version = "0.1.0"
+description = "ADV98 MES and PC-98 image codecs and tools"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["rich", "numpy", "pillow"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+image = ["opencv-python", "scipy"]
+reverse = ["capstone", "unicorn"]
+
+[tool.setuptools.packages.find]
+include = ["modules*", "gspecific*"]
+
+[tool.setuptools.package-data]
+gspecific = ["**/*.json", "**/*.md"]
+modules = ["data/*.json", "**/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

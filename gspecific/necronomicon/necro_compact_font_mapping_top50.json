@@ -1,0 +1,362 @@
+{
+  "format": "necronomicon-adv98-one-byte-font-remap-v1",
+  "description": "Necronomicon compact glyph mapping: existing 20 plus 30 additional frequency-ranked characters.",
+  "source_code_range": {
+    "first": "2D",
+    "last": "5E",
+    "note": "ADV98 compressed text codes 2D through 5E; source SJIS glyphs 829F through 82D0."
+  },
+  "scope": "Necronomicon translated MES files; verify runtime text and controls before final use",
+  "entries": [
+    {
+      "rank": 1,
+      "character": " ",
+      "code": "2D",
+      "source_sjis": "829F",
+      "source_character": "あ"
+    },
+    {
+      "rank": 2,
+      "character": "이",
+      "code": "2E",
+      "source_sjis": "82A0",
+      "source_character": "い"
+    },
+    {
+      "rank": 3,
+      "character": ".",
+      "code": "2F",
+      "source_sjis": "82A1",
+      "source_character": "う"
+    },
+    {
+      "rank": 4,
+      "character": "는",
+      "code": "30",
+      "source_sjis": "82A2",
+      "source_character": "え"
+    },
+    {
+      "rank": 5,
+      "character": "다",
+      "code": "31",
+      "source_sjis": "82A3",
+      "source_character": "お"
+    },
+    {
+      "rank": 6,
+      "character": "지",
+      "code": "32",
+      "source_sjis": "82A4",
+      "source_character": "か"
+    },
+    {
+      "rank": 7,
+      "character": "가",
+      "code": "33",
+      "source_sjis": "82A5",
+      "source_character": "き"
+    },
+    {
+      "rank": 8,
+      "character": "아",
+      "code": "34",
+      "source_sjis": "82A6",
+      "source_character": "く"
+    },
+    {
+      "rank": 9,
+      "character": "에",
+      "code": "35",
+      "source_sjis": "82A7",
+      "source_character": "け"
+    },
+    {
+      "rank": 10,
+      "character": "을",
+      "code": "36",
+      "source_sjis": "82A8",
+      "source_character": "こ"
+    },
+    {
+      "rank": 11,
+      "character": "어",
+      "code": "37",
+      "source_sjis": "82A9",
+      "source_character": "さ"
+    },
+    {
+      "rank": 12,
+      "character": "…",
+      "code": "38",
+      "source_sjis": "82AA",
+      "source_character": "し"
+    },
+    {
+      "rank": 13,
+      "character": "「",
+      "code": "39",
+      "source_sjis": "82AB",
+      "source_character": "す"
+    },
+    {
+      "rank": 14,
+      "character": "」",
+      "code": "3A",
+      "source_sjis": "82AC",
+      "source_character": "せ"
+    },
+    {
+      "rank": 15,
+      "character": "은",
+      "code": "3B",
+      "source_sjis": "82AD",
+      "source_character": "そ"
+    },
+    {
+      "rank": 16,
+      "character": "하",
+      "code": "3C",
+      "source_sjis": "82AE",
+      "source_character": "た"
+    },
+    {
+      "rank": 17,
+      "character": "도",
+      "code": "3D",
+      "source_sjis": "82AF",
+      "source_character": "ち"
+    },
+    {
+      "rank": 18,
+      "character": "고",
+      "code": "3E",
+      "source_sjis": "82B0",
+      "source_character": "つ"
+    },
+    {
+      "rank": 19,
+      "character": "리",
+      "code": "3F",
+      "source_sjis": "82B1",
+      "source_character": "て"
+    },
+    {
+      "rank": 20,
+      "character": "있",
+      "code": "40",
+      "source_sjis": "82B2",
+      "source_character": "と"
+    },
+    {
+      "rank": 21,
+      "character": "그",
+      "code": "41",
+      "source_sjis": "82B3",
+      "source_character": "さ"
+    },
+    {
+      "rank": 22,
+      "character": "한",
+      "code": "42",
+      "source_sjis": "82B4",
+      "source_character": "ざ"
+    },
+    {
+      "rank": 23,
+      "character": "게",
+      "code": "43",
+      "source_sjis": "82B5",
+      "source_character": "し"
+    },
+    {
+      "rank": 24,
+      "character": ",",
+      "code": "44",
+      "source_sjis": "82B6",
+      "source_character": "じ"
+    },
+    {
+      "rank": 25,
+      "character": "의",
+      "code": "45",
+      "source_sjis": "82B7",
+      "source_character": "す"
+    },
+    {
+      "rank": 26,
+      "character": "것",
+      "code": "46",
+      "source_sjis": "82B8",
+      "source_character": "ず"
+    },
+    {
+      "rank": 27,
+      "character": "나",
+      "code": "47",
+      "source_sjis": "82B9",
+      "source_character": "せ"
+    },
+    {
+      "rank": 28,
+      "character": "기",
+      "code": "48",
+      "source_sjis": "82BA",
+      "source_character": "ぜ"
+    },
+    {
+      "rank": 29,
+      "character": "로",
+      "code": "49",
+      "source_sjis": "82BB",
+      "source_character": "そ"
+    },
+    {
+      "rank": 30,
+      "character": "너",
+      "code": "4A",
+      "source_sjis": "82BC",
+      "source_character": "ぞ"
+    },
+    {
+      "rank": 31,
+      "character": "인",
+      "code": "4B",
+      "source_sjis": "82BD",
+      "source_character": "た"
+    },
+    {
+      "rank": 32,
+      "character": "만",
+      "code": "4C",
+      "source_sjis": "82BE",
+      "source_character": "だ"
+    },
+    {
+      "rank": 33,
+      "character": "조",
+      "code": "4D",
+      "source_sjis": "82BF",
+      "source_character": "ち"
+    },
+    {
+      "rank": 34,
+      "character": "자",
+      "code": "4E",
+      "source_sjis": "82C0",
+      "source_character": "ぢ"
+    },
+    {
+      "rank": 35,
+      "character": "서",
+      "code": "4F",
+      "source_sjis": "82C1",
+      "source_character": "っ"
+    },
+    {
+      "rank": 36,
+      "character": "없",
+      "code": "50",
+      "source_sjis": "82C2",
+      "source_character": "つ"
+    },
+    {
+      "rank": 37,
+      "character": "사",
+      "code": "51",
+      "source_sjis": "82C3",
+      "source_character": "づ"
+    },
+    {
+      "rank": 38,
+      "character": "?",
+      "code": "52",
+      "source_sjis": "82C4",
+      "source_character": "て"
+    },
+    {
+      "rank": 39,
+      "character": "라",
+      "code": "53",
+      "source_sjis": "82C5",
+      "source_character": "で"
+    },
+    {
+      "rank": 40,
+      "character": "니",
+      "code": "54",
+      "source_sjis": "82C6",
+      "source_character": "と"
+    },
+    {
+      "rank": 41,
+      "character": "수",
+      "code": "55",
+      "source_sjis": "82C7",
+      "source_character": "ど"
+    },
+    {
+      "rank": 42,
+      "character": "선",
+      "code": "56",
+      "source_sjis": "82C8",
+      "source_character": "な"
+    },
+    {
+      "rank": 43,
+      "character": "마",
+      "code": "57",
+      "source_sjis": "82C9",
+      "source_character": "に"
+    },
+    {
+      "rank": 44,
+      "character": "무",
+      "code": "58",
+      "source_sjis": "82CA",
+      "source_character": "ぬ"
+    },
+    {
+      "rank": 45,
+      "character": "않",
+      "code": "59",
+      "source_sjis": "82CB",
+      "source_character": "ね"
+    },
+    {
+      "rank": 46,
+      "character": "를",
+      "code": "5A",
+      "source_sjis": "82CC",
+      "source_character": "の"
+    },
+    {
+      "rank": 47,
+      "character": "까",
+      "code": "5B",
+      "source_sjis": "82CD",
+      "source_character": "は"
+    },
+    {
+      "rank": 48,
+      "character": "들",
+      "code": "5C",
+      "source_sjis": "82CE",
+      "source_character": "ば"
+    },
+    {
+      "rank": 49,
+      "character": "일",
+      "code": "5D",
+      "source_sjis": "82CF",
+      "source_character": "ぱ"
+    },
+    {
+      "rank": 50,
+      "character": "보",
+      "code": "5E",
+      "source_sjis": "82D0",
+      "source_character": "ひ"
+    }
+  ]
+}
