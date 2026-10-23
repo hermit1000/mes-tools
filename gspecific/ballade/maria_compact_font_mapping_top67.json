@@ -1,0 +1,616 @@
+{
+  "format": "maria-adv98-one-byte-font-remap-v1",
+  "description": "67 most frequent drawable literal glyphs in all current Ballade translations; inline code tokens excluded.",
+  "source_code_range": {
+    "first": "2D",
+    "last": "6F",
+    "note": "ADV98 compressed codes; source SJIS glyphs 829F through 82E1."
+  },
+  "ranking_rule": "Character occurrence count descending; Unicode character ascending on ties.",
+  "scope": "All current translations. Tokens and preserved/private glyphs are excluded. Requires matching font BMP and re-encoding.",
+  "entries": [
+    {
+      "rank": 1,
+      "character": " ",
+      "code": "2D",
+      "source_sjis": "829F",
+      "source_character": "ぁ",
+      "frequency": 111580,
+      "estimated_saved_bytes": 111580
+    },
+    {
+      "rank": 2,
+      "character": ".",
+      "code": "2E",
+      "source_sjis": "82A0",
+      "source_character": "あ",
+      "frequency": 17305,
+      "estimated_saved_bytes": 17305
+    },
+    {
+      "rank": 3,
+      "character": "이",
+      "code": "2F",
+      "source_sjis": "82A1",
+      "source_character": "ぃ",
+      "frequency": 14750,
+      "estimated_saved_bytes": 14750
+    },
+    {
+      "rank": 4,
+      "character": "는",
+      "code": "30",
+      "source_sjis": "82A2",
+      "source_character": "い",
+      "frequency": 9590,
+      "estimated_saved_bytes": 9590
+    },
+    {
+      "rank": 5,
+      "character": "지",
+      "code": "31",
+      "source_sjis": "82A3",
+      "source_character": "ぅ",
+      "frequency": 9287,
+      "estimated_saved_bytes": 9287
+    },
+    {
+      "rank": 6,
+      "character": "다",
+      "code": "32",
+      "source_sjis": "82A4",
+      "source_character": "う",
+      "frequency": 8231,
+      "estimated_saved_bytes": 8231
+    },
+    {
+      "rank": 7,
+      "character": "가",
+      "code": "33",
+      "source_sjis": "82A5",
+      "source_character": "ぇ",
+      "frequency": 8111,
+      "estimated_saved_bytes": 8111
+    },
+    {
+      "rank": 8,
+      "character": "아",
+      "code": "34",
+      "source_sjis": "82A6",
+      "source_character": "え",
+      "frequency": 7820,
+      "estimated_saved_bytes": 7820
+    },
+    {
+      "rank": 9,
+      "character": "그",
+      "code": "35",
+      "source_sjis": "82A7",
+      "source_character": "ぉ",
+      "frequency": 7354,
+      "estimated_saved_bytes": 7354
+    },
+    {
+      "rank": 10,
+      "character": "에",
+      "code": "36",
+      "source_sjis": "82A8",
+      "source_character": "お",
+      "frequency": 6368,
+      "estimated_saved_bytes": 6368
+    },
+    {
+      "rank": 11,
+      "character": "어",
+      "code": "37",
+      "source_sjis": "82A9",
+      "source_character": "か",
+      "frequency": 6203,
+      "estimated_saved_bytes": 6203
+    },
+    {
+      "rank": 12,
+      "character": "하",
+      "code": "38",
+      "source_sjis": "82AA",
+      "source_character": "が",
+      "frequency": 6179,
+      "estimated_saved_bytes": 6179
+    },
+    {
+      "rank": 13,
+      "character": "니",
+      "code": "39",
+      "source_sjis": "82AB",
+      "source_character": "き",
+      "frequency": 5978,
+      "estimated_saved_bytes": 5978
+    },
+    {
+      "rank": 14,
+      "character": ",",
+      "code": "3A",
+      "source_sjis": "82AC",
+      "source_character": "ぎ",
+      "frequency": 5391,
+      "estimated_saved_bytes": 5391
+    },
+    {
+      "rank": 15,
+      "character": "?",
+      "code": "3B",
+      "source_sjis": "82AD",
+      "source_character": "く",
+      "frequency": 5239,
+      "estimated_saved_bytes": 5239
+    },
+    {
+      "rank": 16,
+      "character": "요",
+      "code": "3C",
+      "source_sjis": "82AE",
+      "source_character": "ぐ",
+      "frequency": 5059,
+      "estimated_saved_bytes": 5059
+    },
+    {
+      "rank": 17,
+      "character": "도",
+      "code": "3D",
+      "source_sjis": "82AF",
+      "source_character": "け",
+      "frequency": 5033,
+      "estimated_saved_bytes": 5033
+    },
+    {
+      "rank": 18,
+      "character": "을",
+      "code": "3E",
+      "source_sjis": "82B0",
+      "source_character": "げ",
+      "frequency": 4850,
+      "estimated_saved_bytes": 4850
+    },
+    {
+      "rank": 19,
+      "character": "고",
+      "code": "3F",
+      "source_sjis": "82B1",
+      "source_character": "こ",
+      "frequency": 4716,
+      "estimated_saved_bytes": 4716
+    },
+    {
+      "rank": 20,
+      "character": "기",
+      "code": "40",
+      "source_sjis": "82B2",
+      "source_character": "ご",
+      "frequency": 4468,
+      "estimated_saved_bytes": 4468
+    },
+    {
+      "rank": 21,
+      "character": "게",
+      "code": "41",
+      "source_sjis": "82B3",
+      "source_character": "さ",
+      "frequency": 4250,
+      "estimated_saved_bytes": 4250
+    },
+    {
+      "rank": 22,
+      "character": "해",
+      "code": "42",
+      "source_sjis": "82B4",
+      "source_character": "ざ",
+      "frequency": 4192,
+      "estimated_saved_bytes": 4192
+    },
+    {
+      "rank": 23,
+      "character": "…",
+      "code": "43",
+      "source_sjis": "82B5",
+      "source_character": "し",
+      "frequency": 3984,
+      "estimated_saved_bytes": 3984
+    },
+    {
+      "rank": 24,
+      "character": "은",
+      "code": "44",
+      "source_sjis": "82B6",
+      "source_character": "じ",
+      "frequency": 3828,
+      "estimated_saved_bytes": 3828
+    },
+    {
+      "rank": 25,
+      "character": "나",
+      "code": "45",
+      "source_sjis": "82B7",
+      "source_character": "す",
+      "frequency": 3805,
+      "estimated_saved_bytes": 3805
+    },
+    {
+      "rank": 26,
+      "character": "사",
+      "code": "46",
+      "source_sjis": "82B8",
+      "source_character": "ず",
+      "frequency": 3585,
+      "estimated_saved_bytes": 3585
+    },
+    {
+      "rank": 27,
+      "character": "만",
+      "code": "47",
+      "source_sjis": "82B9",
+      "source_character": "せ",
+      "frequency": 3563,
+      "estimated_saved_bytes": 3563
+    },
+    {
+      "rank": 28,
+      "character": "까",
+      "code": "48",
+      "source_sjis": "82BA",
+      "source_character": "ぜ",
+      "frequency": 3268,
+      "estimated_saved_bytes": 3268
+    },
+    {
+      "rank": 29,
+      "character": "리",
+      "code": "49",
+      "source_sjis": "82BB",
+      "source_character": "そ",
+      "frequency": 3259,
+      "estimated_saved_bytes": 3259
+    },
+    {
+      "rank": 30,
+      "character": "있",
+      "code": "4A",
+      "source_sjis": "82BC",
+      "source_character": "ぞ",
+      "frequency": 3220,
+      "estimated_saved_bytes": 3220
+    },
+    {
+      "rank": 31,
+      "character": "한",
+      "code": "4B",
+      "source_sjis": "82BD",
+      "source_character": "た",
+      "frequency": 3085,
+      "estimated_saved_bytes": 3085
+    },
+    {
+      "rank": 32,
+      "character": "로",
+      "code": "4C",
+      "source_sjis": "82BE",
+      "source_character": "だ",
+      "frequency": 3074,
+      "estimated_saved_bytes": 3074
+    },
+    {
+      "rank": 33,
+      "character": "라",
+      "code": "4D",
+      "source_sjis": "82BF",
+      "source_character": "ち",
+      "frequency": 2971,
+      "estimated_saved_bytes": 2971
+    },
+    {
+      "rank": 34,
+      "character": "의",
+      "code": "4E",
+      "source_sjis": "82C0",
+      "source_character": "ぢ",
+      "frequency": 2901,
+      "estimated_saved_bytes": 2901
+    },
+    {
+      "rank": 35,
+      "character": "야",
+      "code": "4F",
+      "source_sjis": "82C1",
+      "source_character": "っ",
+      "frequency": 2802,
+      "estimated_saved_bytes": 2802
+    },
+    {
+      "rank": 36,
+      "character": "서",
+      "code": "50",
+      "source_sjis": "82C2",
+      "source_character": "つ",
+      "frequency": 2741,
+      "estimated_saved_bytes": 2741
+    },
+    {
+      "rank": 37,
+      "character": "인",
+      "code": "51",
+      "source_sjis": "82C3",
+      "source_character": "づ",
+      "frequency": 2644,
+      "estimated_saved_bytes": 2644
+    },
+    {
+      "rank": 38,
+      "character": "자",
+      "code": "52",
+      "source_sjis": "82C4",
+      "source_character": "て",
+      "frequency": 2521,
+      "estimated_saved_bytes": 2521
+    },
+    {
+      "rank": 39,
+      "character": "말",
+      "code": "53",
+      "source_sjis": "82C5",
+      "source_character": "で",
+      "frequency": 2502,
+      "estimated_saved_bytes": 2502
+    },
+    {
+      "rank": 40,
+      "character": "보",
+      "code": "54",
+      "source_sjis": "82C6",
+      "source_character": "と",
+      "frequency": 2468,
+      "estimated_saved_bytes": 2468
+    },
+    {
+      "rank": 41,
+      "character": "일",
+      "code": "55",
+      "source_sjis": "82C7",
+      "source_character": "ど",
+      "frequency": 2458,
+      "estimated_saved_bytes": 2458
+    },
+    {
+      "rank": 42,
+      "character": "를",
+      "code": "56",
+      "source_sjis": "82C8",
+      "source_character": "な",
+      "frequency": 2382,
+      "estimated_saved_bytes": 2382
+    },
+    {
+      "rank": 43,
+      "character": "면",
+      "code": "57",
+      "source_sjis": "82C9",
+      "source_character": "に",
+      "frequency": 2379,
+      "estimated_saved_bytes": 2379
+    },
+    {
+      "rank": 44,
+      "character": "대",
+      "code": "58",
+      "source_sjis": "82CA",
+      "source_character": "ぬ",
+      "frequency": 2371,
+      "estimated_saved_bytes": 2371
+    },
+    {
+      "rank": 45,
+      "character": "없",
+      "code": "59",
+      "source_sjis": "82CB",
+      "source_character": "ね",
+      "frequency": 2218,
+      "estimated_saved_bytes": 2218
+    },
+    {
+      "rank": 46,
+      "character": "무",
+      "code": "5A",
+      "source_sjis": "82CC",
+      "source_character": "の",
+      "frequency": 2175,
+      "estimated_saved_bytes": 2175
+    },
+    {
+      "rank": 47,
+      "character": "정",
+      "code": "5B",
+      "source_sjis": "82CD",
+      "source_character": "は",
+      "frequency": 2149,
+      "estimated_saved_bytes": 2149
+    },
+    {
+      "rank": 48,
+      "character": "으",
+      "code": "5C",
+      "source_sjis": "82CE",
+      "source_character": "ば",
+      "frequency": 2098,
+      "estimated_saved_bytes": 2098
+    },
+    {
+      "rank": 49,
+      "character": "거",
+      "code": "5D",
+      "source_sjis": "82CF",
+      "source_character": "ぱ",
+      "frequency": 2070,
+      "estimated_saved_bytes": 2070
+    },
+    {
+      "rank": 50,
+      "character": "제",
+      "code": "5E",
+      "source_sjis": "82D0",
+      "source_character": "ひ",
+      "frequency": 2036,
+      "estimated_saved_bytes": 2036
+    },
+    {
+      "rank": 51,
+      "character": "건",
+      "code": "5F",
+      "source_sjis": "82D1",
+      "source_character": "び",
+      "frequency": 2019,
+      "estimated_saved_bytes": 2019
+    },
+    {
+      "rank": 52,
+      "character": "겠",
+      "code": "60",
+      "source_sjis": "82D2",
+      "source_character": "ぴ",
+      "frequency": 1917,
+      "estimated_saved_bytes": 1917
+    },
+    {
+      "rank": 53,
+      "character": "시",
+      "code": "61",
+      "source_sjis": "82D3",
+      "source_character": "ふ",
+      "frequency": 1899,
+      "estimated_saved_bytes": 1899
+    },
+    {
+      "rank": 54,
+      "character": "스",
+      "code": "62",
+      "source_sjis": "82D4",
+      "source_character": "ぶ",
+      "frequency": 1886,
+      "estimated_saved_bytes": 1886
+    },
+    {
+      "rank": 55,
+      "character": "신",
+      "code": "63",
+      "source_sjis": "82D5",
+      "source_character": "ぷ",
+      "frequency": 1838,
+      "estimated_saved_bytes": 1838
+    },
+    {
+      "rank": 56,
+      "character": "데",
+      "code": "64",
+      "source_sjis": "82D6",
+      "source_character": "へ",
+      "frequency": 1747,
+      "estimated_saved_bytes": 1747
+    },
+    {
+      "rank": 57,
+      "character": "네",
+      "code": "65",
+      "source_sjis": "82D7",
+      "source_character": "べ",
+      "frequency": 1666,
+      "estimated_saved_bytes": 1666
+    },
+    {
+      "rank": 58,
+      "character": "않",
+      "code": "66",
+      "source_sjis": "82D8",
+      "source_character": "ぺ",
+      "frequency": 1650,
+      "estimated_saved_bytes": 1650
+    },
+    {
+      "rank": 59,
+      "character": "모",
+      "code": "67",
+      "source_sjis": "82D9",
+      "source_character": "ほ",
+      "frequency": 1647,
+      "estimated_saved_bytes": 1647
+    },
+    {
+      "rank": 60,
+      "character": "런",
+      "code": "68",
+      "source_sjis": "82DA",
+      "source_character": "ぼ",
+      "frequency": 1634,
+      "estimated_saved_bytes": 1634
+    },
+    {
+      "rank": 61,
+      "character": "었",
+      "code": "69",
+      "source_sjis": "82DB",
+      "source_character": "ぽ",
+      "frequency": 1542,
+      "estimated_saved_bytes": 1542
+    },
+    {
+      "rank": 62,
+      "character": "마",
+      "code": "6A",
+      "source_sjis": "82DC",
+      "source_character": "ま",
+      "frequency": 1479,
+      "estimated_saved_bytes": 1479
+    },
+    {
+      "rank": 63,
+      "character": "여",
+      "code": "6B",
+      "source_sjis": "82DD",
+      "source_character": "み",
+      "frequency": 1452,
+      "estimated_saved_bytes": 1452
+    },
+    {
+      "rank": 64,
+      "character": "수",
+      "code": "6C",
+      "source_sjis": "82DE",
+      "source_character": "む",
+      "frequency": 1433,
+      "estimated_saved_bytes": 1433
+    },
+    {
+      "rank": 65,
+      "character": "내",
+      "code": "6D",
+      "source_sjis": "82DF",
+      "source_character": "め",
+      "frequency": 1428,
+      "estimated_saved_bytes": 1428
+    },
+    {
+      "rank": 66,
+      "character": "상",
+      "code": "6E",
+      "source_sjis": "82E0",
+      "source_character": "も",
+      "frequency": 1425,
+      "estimated_saved_bytes": 1425
+    },
+    {
+      "rank": 67,
+      "character": "렇",
+      "code": "6F",
+      "source_sjis": "82E1",
+      "source_character": "ゃ",
+      "frequency": 1403,
+      "estimated_saved_bytes": 1403
+    }
+  ]
+}
