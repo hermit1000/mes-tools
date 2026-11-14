@@ -94,7 +94,13 @@ def refresh_inline_names(info: dict, lang: dict, script_root: Path) -> None:
             if Path(filename).name != filename:
                 raise ValueError(f"invalid name definition filename: {filename}")
             if filename not in documents:
-                documents[filename] = json.loads((script_root / f"{filename}_lang.json").read_text(encoding="utf-8"))
+                definition_path = script_root / f"{filename}_lang.json"
+                if not definition_path.is_file():
+                    candidates = list(script_root.parent.glob(f"MARIA.*/{filename}_lang.json"))
+                    if len(candidates) != 1:
+                        raise ValueError(f"name definition file is not unique: {filename}")
+                    definition_path = candidates[0]
+                documents[filename] = json.loads(definition_path.read_text(encoding="utf-8"))
             definition = next((entry for entry in documents[filename]["entries"] if entry["offset"] == macro["definition_offset"]), None)
             if definition is None or definition["original"] != macro["original_name"]:
                 raise ValueError(f"name definition changed: {filename}:{macro['definition_offset']}")
@@ -179,7 +185,7 @@ def prepare_name_moves(info: dict, lang: dict, *, validate: bool = True, equival
     scopes = []
     pending = []
     for record in info["records"]:
-        if record["type"] == "text" and "ascii" not in record.get("encodings", []):
+        if record["type"] == "text" and not {"ascii", "quoted-display"}.intersection(record.get("encodings", [])):
             pending.append(record)
         elif record.get("value") != "CONTROL_A5":
             if pending:
@@ -193,7 +199,7 @@ def prepare_name_moves(info: dict, lang: dict, *, validate: bool = True, equival
         required = Counter(
             macro["token"] for macro in macros
             if macro.get("original_name") != "{외자:EBE9}" * 3
-            or macro.get("translated_name") != "{외자:EBE9}" * 3
+            or macro.get("translated_name") not in ("{외자:EBE9}" * 3, "\u2026" * 3)
         )
         actual = Counter()
         held = set()

@@ -17,6 +17,7 @@ from gspecific.ballade.special_text import SPECIAL_TEXT_CODES
 from gspecific.ballade.graph_titles import graph_op_title
 from gspecific.ballade.text_layout import EXPLICIT_TOKEN, HALF_SPACE_TOKEN, NOOP_TOKEN, translation_texts, validate_layout
 from gspecific.ballade.inline_names import encode_inline_names, prepare_name_moves, refresh_inline_names
+from gspecific.ballade.quoted_display import encode_display_quote, refresh_quoted_names
 
 
 DEFAULT_WORKSPACE = Path(r"C:\work_han\workspace4")
@@ -71,6 +72,48 @@ def pad_mec_text(encoded: bytes, original_size: int) -> bytes:
     return encoded + bytes((0xD6,)) * (original_size - len(encoded))
 
 
+def validate_control_operands(source: bytes, info: dict, lang: dict, filename: str) -> None:
+    """Reject translations that would replace an original branch operand."""
+    entries = {int(entry["offset"], 16): entry for entry in lang["entries"]}
+
+    def check_operand(offset: int) -> None:
+        entry = entries.get(offset)
+        if entry is None:
+            return
+        translation = entry.get("translation", "")
+        if (translation and translation != "@keep"
+                and not same_display_text(entry["original"], translation)
+                and not entry.get("leading_non_display_bytes")):
+            raise ValueError(f"{filename}:{offset:05X}: branch operand is inside translated text")
+
+    for boundary in range(len(source) - 2):
+        if source[boundary] not in (0xA2, 0xA4) or not 0x08 <= source[boundary + 1] <= 0x0F:
+            continue
+        position = boundary + 1
+        while position + 1 < len(source) and 0x08 <= source[position] <= 0x0F:
+            check_operand(position + 1)
+            position += 2
+
+    block_ends = [-2] + [int(record["offset"], 16) for record in info["records"]
+                         if record.get("type") == "end" and record.get("value") == "END_FFFF"]
+    for end in block_ends:
+        position = end + 2
+        has_selector = False
+        while (position + 2 < len(source) and source[position] == 0x10
+               and source[position + 1] in (0x1A, 0x2A)):
+            has_selector = True
+            position += 3
+        if has_selector:
+            while position + 1 < len(source) and 0x08 <= source[position] <= 0x0F:
+                check_operand(position + 1)
+                position += 2
+
+    for offset in entries:
+        if (offset > 0 and offset + 1 < len(source) and source[offset - 1] == 0x0E
+                and source[offset] >= 0x80 and source[offset + 1] == 0xA4):
+            check_operand(offset)
+
+
 def encode_file(
     source_path: Path,
     info_path: Path,
@@ -93,12 +136,14 @@ def encode_file(
     if info.get("source_size") != len(source) or info.get("source_sha256") != hashlib.sha256(source).hexdigest():
         raise ValueError(f"source differs from extraction input: {source_path}")
     refresh_inline_names(info, lang, lang_path.parent)
+    refresh_quoted_names(info, lang, lang_path.parent)
     try:
         prepare_name_moves(info, lang, equivalent=same_display_text)
     except ValueError as error:
         raise ValueError(f"{lang_path.name}:{error}") from error
 
     records = {record["offset"]: record for record in info["records"] if record.get("type") == "text"}
+    validate_control_operands(source, info, lang, lang_path.name)
     codes = load_maria_font_codes(font_table)
     one_byte_codes = load_marine_remap(compact_remap)
     effective_texts = translation_texts(info, lang)
@@ -131,6 +176,36 @@ def encode_file(
         if span_start < 0 or source[span_start:span_end + 1] != prefix + center_bytes + suffix:
             raise ValueError(f"ASCII space edges differ from source: {lang_path.name}:{offset}")
         start, end = span_start, span_end
+        non_display_bytes = entry.get("leading_non_display_bytes")
+        if non_display_bytes is not None:
+            if left or not isinstance(non_display_bytes, str) or len(non_display_bytes) not in (2, 4):
+                raise ValueError(f"invalid non-display bytes: {lang_path.name}:{offset}")
+            try:
+                raw_non_display = bytes.fromhex(non_display_bytes)
+            except ValueError as error:
+                raise ValueError(f"invalid non-display bytes: {lang_path.name}:{offset}") from error
+            if start < 1 or source[start - 1] not in (0x09, 0x0A, 0x0C, 0x0E, 0x0F) or source[start:start + len(raw_non_display)] != raw_non_display:
+                raise ValueError(f"non-display bytes differ from source: {lang_path.name}:{offset}")
+            start += len(raw_non_display)
+        leading_bytes = entry.get("leading_display_bytes")
+        if leading_bytes is not None:
+            if left or non_display_bytes is not None or not isinstance(leading_bytes, str) or len(leading_bytes) not in (2, 4):
+                raise ValueError(f"invalid leading display bytes: {lang_path.name}:{offset}")
+            try:
+                raw_leading = bytes.fromhex(leading_bytes)
+            except ValueError as error:
+                raise ValueError(f"invalid leading display bytes: {lang_path.name}:{offset}") from error
+            contexts = {1: (b"\x08", b"\x0D", b"\x09\x19", b"\x09\x28", b"\x10\x2A\x02"), 2: (b"\x0D", b"\x0A\x82", b"\x0A\x8B", b"\x09\x28", b"\x09\x29", b"\x09\x2B", b"\x09\x2C", b"\x0F\x2B")}.get(len(raw_leading), ())
+            if not any(start >= len(context) + len(raw_leading) and source[start - len(context) - len(raw_leading):start] == context + raw_leading for context in contexts):
+                raise ValueError(f"leading display bytes differ from source: {lang_path.name}:{offset}")
+            start -= len(raw_leading)
+        leading_macro = entry.get("leading_display_macro")
+        if leading_macro is not None:
+            if (leading_bytes is not None or non_display_bytes is not None
+                    or leading_macro != "BA280F" or "quoted-display" not in record.get("encodings", [])
+                    or start < 3 or source[start - 3:start] != b"\xBA\x28\x0F"):
+                raise ValueError(f"leading display macro differs from source: {lang_path.name}:{offset}")
+            start -= 3
         original_bytes = source[start:end + 1]
         translation = entry.get("translation", "")
         if not isinstance(translation, str):
@@ -142,12 +217,15 @@ def encode_file(
         # The table stores fullwidth Latin letters and digits under their ASCII names.
         display = effective_texts.get(offset, translation)
         try:
-            encoded = encode_inline_names(
-                display, record,
-                lambda text: encode_ballade_text(text, codes, one_byte_codes),
-            )
+            encode_text = lambda text: encode_ballade_text(text, codes, one_byte_codes)
+            encoded = (encode_display_quote(display, record, encode_text)
+                       if "quoted-display" in record.get("encodings", [])
+                       else encode_inline_names(display, record, encode_text))
         except ValueError as error:
             raise ValueError(f"{lang_path.name}:{offset}: {error}") from error
+        if leading_bytes is not None and len(raw_leading) == 2 and source[start - 2:start] == b"\x09\x2C":
+            if len(encoded) < 2 or encoded[0] < 0x81:
+                raise ValueError(f"{lang_path.name}:{offset}: 09 2C display glyph must stay two bytes")
         if source_path.suffix.upper() == ".MEC":
             if len(encoded) > len(original_bytes):
                 if mec_original_fallbacks is not None:

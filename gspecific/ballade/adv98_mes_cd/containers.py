@@ -73,7 +73,12 @@ def repack(original, modified, output, manifest):
         relative = path.relative_to(original)
         if relative.as_posix() not in paths:
             override = modified / relative
-            save_bytes(output / relative, (override if override.is_file() else path).read_bytes())
+            payload = (override if override.is_file() else path).read_bytes()
+            target = output / relative
+            if payload == path.read_bytes():
+                target.unlink(missing_ok=True)
+            else:
+                save_bytes(target, payload)
     for container in manifest['containers']:
         relative = Path(container['container_path'])
         data = (original / relative).read_bytes()
@@ -110,7 +115,11 @@ def repack(original, modified, output, manifest):
         restored, _, _ = parse_container(rebuilt)
         for entry, payload in zip(restored, payloads):
             assert rebuilt[entry['offset']:entry['offset'] + entry['size']] == payload
-        save_bytes(output / relative, rebuilt)
+        target = output / relative
+        if rebuilt == data:
+            target.unlink(missing_ok=True)
+        else:
+            save_bytes(target, rebuilt)
         generated.append(dict(container, size=len(rebuilt), sha256=sha(rebuilt), entries=new_records))
         if modifications:
             changed.append({'container': relative.as_posix(), 'original_size': len(data),

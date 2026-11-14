@@ -2,8 +2,13 @@
 
 import argparse
 from pathlib import Path
+import sys
 
-from gspecific.ballade.encode_mes import DEFAULT_FONT_TABLE, encode_file
+if __package__ in (None, ''):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+    __package__ = 'gspecific.ballade.adv98_mes_cd'
+
+from gspecific.ballade.encode_mes import DEFAULT_FONT_TABLE, DEFAULT_WORKSPACE, encode_file
 from .common import Paths, read_json, selected, write_json
 from .containers import repack
 from .runtime import deploy
@@ -56,7 +61,7 @@ def encode_cd(workspace: Path, names=None, *, font_table=DEFAULT_FONT_TABLE,
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("workspace", nargs="?", type=Path, default=Path.cwd())
+    parser.add_argument("workspace", nargs="?", type=Path, default=DEFAULT_WORKSPACE)
     parser.add_argument("--files", nargs="+", help="MES/MEC basenames or container-relative paths")
     parser.add_argument("--font-table", type=Path, default=DEFAULT_FONT_TABLE)
     parser.add_argument("--compact-remap", type=Path, default=DEFAULT_COMPACT_REMAP)

@@ -10,12 +10,13 @@ from pathlib import Path
 from modules.adv_common.mes_decoder import make_records
 from modules.adv_common.mes_lexer import decode_mes as decode_lexical_mes
 from modules.adv_common.ascii import resolve_ascii_and_gaiji
-from modules.adv_common.tokens import make_token
+from modules.adv_common.tokens import is_sjis_lead, is_sjis_trail, make_token
 from .speaker_groups import annotate_directory, annotate_speakers
 from .special_text import merge_special_text
 from .text_layout import annotate_layout
 from .inline_names import merge_inline_names
 from .graph_titles import graph_op_title
+from .quoted_display import promote_display_quotes
 
 
 def split_f0_control(tokens: list[dict], data: bytes) -> list[dict]:
@@ -42,13 +43,129 @@ def decode_ballade_mes(data: bytes) -> list[dict]:
     probe = bytearray(data)
     display_parameters: set[int] = set()
     single_byte_controls: set[int] = set()
+    single_byte_arguments: set[int] = set()
     marker = b"\x1a\x00\x0a\x0d\x8f\xea"
+    start = 0
+    # F0 introduces the following display text here; 8E A9 is the SJIS
+    # first glyph of "jibun", not the trail byte of an F0 8E gaiji.
+    marker_f0_before_ji = b"\xa4\x0a\xf0\x8e\xa9"
+    while (start := data.find(marker_f0_before_ji, start)) >= 0:
+        offset = start + 2
+        single_byte_controls.add(offset)
+        probe[offset] = 0x0B
+        start = offset + 1
     start = 0
     while (start := data.find(marker, start)) >= 0:
         offset = start + 3
         single_byte_controls.add(offset)
         probe[offset] = 0x0B
         start = offset + 1
+    for start in range(len(data) - 4):
+        if (data[start] in (0xA2, 0xA4)
+                and data[start + 1] == 0x09
+                and 0xE0 <= data[start + 2] <= 0xFC
+                and data[start + 3:start + 5] != b"\x81\x97"):
+            offset = start + 2
+            single_byte_controls.add(offset)
+            probe[offset] = 0x0B
+        if (data[start] in (0xA2, 0xA4)
+                and data[start + 1] == 0x0E
+                and 0x6F <= data[start + 2] <= 0x80):
+            offset = start + 1
+            display_parameters.add(offset)
+            probe[offset] = 0x08
+            if data[start + 3] == 0x09 and 0xE0 <= data[start + 4] <= 0xFC:
+                offset = start + 4
+                single_byte_controls.add(offset)
+                probe[offset] = 0x0B
+    for marker in (b"\xa4\x09\x0c\x89\xc9\x38\x56",
+                   b"\xa4\x09\x0c\x96\x6c\x8e\xa9",
+                   b"\xa4\x09\x0c\x8a\xc4\x93\xc2",
+                   b"\xa4\x09\x0c\x83\x54\x83\x93",
+                   b"\xa4\x09\x0c\x8c\x78\x8e\x40",
+                   b"\xa4\x09\x98\x88\xea\x91\xcc",
+                   b"\xa2\x09\x99\x83\x4b",
+                   b"\xa4\x09\x9a\x49\x78",
+                   b"\xa4\x09\x9d\x83\x4d",
+                   b"\xa4\x09\x9e\x83\x4a",
+                   b"\xa4\x09\x84\x74\x37",
+                   b"\xa4\x09\x86\x54\x32",
+                   b"\xa2\x09\x88\x83\x47",
+                   b"\xa4\x09\x89\x83\x47",
+                   b"\xa4\x09\x8c\x8f\x45",
+                   b"\x09\x9b\xba\x28\x0e",
+                   b"\xa4\x09\x9c\xba\x28\x0e"):
+        start = 0
+        while (start := data.find(marker, start)) >= 0:
+            offset = start + (1 if marker.startswith(b"\x09") else 2)
+            single_byte_controls.add(offset)
+            probe[offset] = 0x0B
+            start = offset + 1
+    for marker, advance in ((b"\xa2\x0e\x7a\x09\xf3\x93\x96", 4),
+                            (b"\xa4\x0e\x7a\x09\xf4\x83\x8c", 4),
+                            (b"\xa4\x0a\x85\x83\x4b", 2),
+                            (b"\x0e\x85\xa4\x91\x53", 1),
+                            (b"\xa2\x0a\x86\x83\x67", 2),
+                            (b"\xa4\x0f\x1b\x0e\x88\x83\x56", 4),
+                            (b"\x0e\xf9\xa4\xba\x28", 1),
+                            (b"\xa2\x0f\x1c\x09\xf7\x92\x4e", 4),
+                            (b"\xa2\x0f\x1b\x09\xf9\x83\x4d", 4),
+                            (b"\xa4\x0a\xef\x8d\x6c", 2)):
+        start = 0
+        while (start := data.find(marker, start)) >= 0:
+            offset = start + advance
+            single_byte_controls.add(offset)
+            probe[offset] = 0x0B
+            start = offset + 1
+    for marker, advance in ((b"\xa4\x0a\x7f\x3f\x78", 1),
+                            (b"\xa4\x0a\x81\x83\x81", 1),
+                            (b"\xa2\x0a\x83\x8a\x6d", 1),
+                            (b"\xa4\x0a\x78\x83\x67", 1),
+                            (b"\x0e\x88\xa4\xba\x28", 0)):
+        start = 0
+        while (start := data.find(marker, start)) >= 0:
+            offset = start + advance
+            display_parameters.add(offset)
+            probe[offset] = 0x08
+            start = offset + 2
+    marker = b"\x0e\x6f\xa3\xff\xff"
+    start = 0
+    while (start := data.find(marker, start)) >= 0:
+        display_parameters.add(start)
+        probe[start] = 0x08
+        start += len(marker)
+    marker = b"\x28\x09\x23\x0e\x72\x97\xe1"
+    start = 0
+    while (start := data.find(marker, start)) >= 0:
+        offset = start + 3
+        display_parameters.add(offset)
+        probe[offset] = 0x08
+        start = offset + 2
+    for marker in (b"\xa4\x0d\xf2\x0e\x70", b"\xa4\x0d\xf6\x0e\x70"):
+        start = 0
+        while (start := data.find(marker, start)) >= 0:
+            offset = start + 3
+            display_parameters.add(offset)
+            probe[offset] = 0x08
+            start = offset + 2
+    marker = b"\x24\x24\x0e\x74\xba\x28\x0e"
+    start = 0
+    while (start := data.find(marker, start)) >= 0:
+        offset = start + 2
+        display_parameters.add(offset)
+        probe[offset] = 0x08
+        start = offset + 2
+    for marker in (b"\xa4\x09\x08\x8e\x64\x8e\x96",
+                   b"\xa4\x09\x08\x93\xcb\x91\x52",
+                   b"\xa4\x09\x19\x83\x4b\x83\x43",
+                   b"\xa4\x09\x08\x96\x6c\x57\x5b",
+                   b"\xa4\x09\x08\x83\x4b\x83\x43"):
+        start = 0
+        while (start := data.find(marker, start)) >= 0:
+            offset = start + 2
+            single_byte_controls.add(offset)
+            probe[offset] = 0x0B
+            start = offset + 1
     marker = b"\x1a\x00\x0a\x93"
     start = 0
     while (start := data.find(marker, start)) >= 0:
@@ -59,21 +176,77 @@ def decode_ballade_mes(data: bytes) -> list[dict]:
             display_parameters.add(offset + 2)
             probe[offset + 2] = 0x08
         start = offset + 2
-    for marker in (b"\xa4\x0e\x91", b"\xa2\x0e\x93\x90\x53"):
+    marker = b"\x1a\x01\x0a\x8e"
+    start = 0
+    while (start := data.find(marker, start)) >= 0:
+        offset = start + 2
+        display_parameters.add(offset)
+        probe[offset] = 0x08
+        start = offset + 2
+    for marker in (b"\xa4\x0e\x91", b"\xa2\x0e\x93\x90\x53", b"\x0e\x8e\xa4",
+                   b"\x0e\x2c\x83\x81\x83\x8a",
+                   b"\xa2\x0e\xfb\x83\x81\x83\x8a\x83\x8b"):
         start = 0
         while (start := data.find(marker, start)) >= 0:
-            offset = start + 1
+            offset = start if marker.startswith(b"\x0e") else start + 1
             display_parameters.add(offset)
             probe[offset] = 0x08
             start = offset + 2
     for marker in (b"\x10\x2a\x00\x89\xbd\x7e", b"\x10\x2a\x00\x90\xe6",
-                   b"\x10\x2a\x00\x54\x57\x37"):
+                   b"\x10\x2a\x00\x8e\xca\x90\x5e",
+                   b"\x10\x2a\x00\x54\x57\x37",
+                   b"\x10\x2a\x00\x32\x4f\x45",
+                   b"\x10\x2a\x03\x6a\x4c\x89\xbd",
+                   b"\x10\x2a\x04\x81\x97\x96\x6c",
+                   b"\x10\x2a\x03\x83\x57\x83\x46",
+                   b"\x10\x2a\x04\x96\x6c\x5b",
+                   b"\x10\x2a\x03\x41\x52\x81\x41",
+                   b"\x10\x2a\x03\x0a\x43\x54",
+                   b"\x10\x2a\x03\x91\x81\x30\x54"):
         start = 0
         while (start := data.find(marker, start)) >= 0:
             offset = start + 1
             display_parameters.add(offset)
             probe[offset] = 0x08
             start = offset + 2
+            if marker == b"\x10\x2a\x03\x0a\x43\x54":
+                display_parameters.add(start)
+                probe[start] = 0x08
+    for marker in (b"\x09\x2a\x94\xc6\x8d\x73",
+                   b"\x09\x2a\x89\xbd\x8c\xcc",
+                   b"\x09\x2a\x6e\x32\x83\x4a",
+                   b"\x09\x2a\x81\x40\x81\x40"):
+        start = 0
+        while (start := data.find(marker, start)) >= 0:
+            display_parameters.add(start)
+            probe[start] = 0x08
+            start += 2
+    for suffix, next_byte in ((0x71, 0x8B), (0x72, 0x6A), (0x73, 0x8E),
+                              (0x74, 0x49), (0x75, 0x8F), (0x76, 0x83),
+                              (0x77, 0x97)):
+        marker = b"\x10\x2a\x02\x08" + bytes((suffix, next_byte))
+        start = 0
+        while (start := data.find(marker, start)) >= 0:
+            offset = start + 1
+            display_parameters.add(offset)
+            probe[offset] = 0x08
+            start = offset + 2
+    # 0A 28 is a one-byte selector here; the following SJIS pair is display text.
+    for start in range(len(data) - 4):
+        if (data[start:start + 3] == b"\xa4\x0a\x28"
+                and is_sjis_lead(data[start + 3])
+                and is_sjis_trail(data[start + 4])):
+            offset = start + 2
+            single_byte_arguments.add(offset)
+            probe[offset] = 0x0B
+    # The E6 flag operand must not pair with the following 81 97 control.
+    marker = b"\x0e\xe6\x81\x97\xcc"
+    start = 0
+    while (start := data.find(marker, start)) >= 0:
+        offset = start + 1
+        single_byte_controls.add(offset)
+        probe[offset] = 0x0B
+        start = offset + 1
     operands: set[int] = set()
     while True:
         tokens = decode_lexical_mes(bytes(probe), ascii_output=True)
@@ -87,6 +260,9 @@ def decode_ballade_mes(data: bytes) -> list[dict]:
         operands.add(offset)
         probe[offset] = 0x0B
     tokens = [make_token(token["offset"], 1, data[token["offset"]:token["offset"] + 1],
+                         "argument", 5)
+              if token["offset"] in single_byte_arguments else
+              make_token(token["offset"], 1, data[token["offset"]:token["offset"] + 1],
                          "control", f"CONTROL_{data[token['offset']]:02X}")
               if token["offset"] in single_byte_controls else
               make_token(token["offset"], 1, b"\x22", "control", "CONTROL_22")
@@ -174,6 +350,7 @@ def decode_file(source: Path, source_root: Path) -> tuple[dict, dict]:
         ],
     }
     info, lang, _ = merge_inline_names(info, lang)
+    promote_display_quotes(info, lang)
     annotate_speakers(info, lang)
     annotate_layout(info, lang)
     if source.suffix.upper() == ".MES":

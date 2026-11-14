@@ -24,7 +24,8 @@ from gspecific.ballade.encode_mes import (
 DEFAULT_COMPACT_REMAP = Path(__file__).with_name(
     "maria_compact_font_mapping_top67.json"
 )
-DEFAULT_FILES = []  # Empty: all files. Example: ["001.MES", "SAVE.MEC"]
+DEFAULT_FILE_RANGE = (400, 499)  # Inclusive; None selects all MES/MEC files.
+DEFAULT_FILE_RANGE = None
 
 
 def main() -> int:
@@ -38,7 +39,7 @@ def main() -> int:
         help=f"one-byte font remap JSON; default: {DEFAULT_COMPACT_REMAP}",
     )
     parser.add_argument(
-        "--files", nargs="+", help="MES/MEC filenames; overrides DEFAULT_FILES"
+        "--files", nargs="+", help="MES/MEC filenames; overrides DEFAULT_FILE_RANGE"
     )
     parser.add_argument(
         "--dry-run", action="store_true", help="validate without writing output files"
@@ -64,18 +65,32 @@ def main() -> int:
 
     workspace = args.workspace.resolve()
     source_dir = workspace / "jpn-pc98" / "MES"
-    names = args.files if args.files is not None else list(DEFAULT_FILES)
-    if not names:
-        names = sorted(
-            path.name
-            for path in source_dir.iterdir()
-            if path.is_file() and path.suffix.upper() in {".MES", ".MEC"}
-        )
-    if any(
+    if args.files is not None and any(
         Path(name).name != name or Path(name).suffix.upper() not in {".MES", ".MEC"}
-        for name in names
+        for name in args.files
     ):
         parser.error("file list accepts only MES/MEC filenames")
+    available = sorted(
+        path.name
+        for path in source_dir.iterdir()
+        if path.is_file() and path.suffix.upper() in {".MES", ".MEC"}
+    )
+    if args.files is not None:
+        names = args.files
+    elif DEFAULT_FILE_RANGE is None:
+        names = available
+    else:
+        start, end = DEFAULT_FILE_RANGE
+        if start > end:
+            parser.error("DEFAULT_FILE_RANGE start must not exceed end")
+        names = [
+            name
+            for name in available
+            if (match := re.match(r"^(\d+)", name))
+            and start <= int(match.group(1)) <= end
+        ]
+        if not names:
+            parser.error(f"no MES/MEC files in DEFAULT_FILE_RANGE {start}-{end}")
     if len({name.casefold() for name in names}) != len(names):
         parser.error("duplicate file names")
     successes = failures = replacements = 0

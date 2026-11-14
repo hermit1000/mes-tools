@@ -62,6 +62,9 @@ def main():
         source = paths.unpacked / relative
         info = lang.with_name(relative.name + '_info.json')
         output = unpacked / relative
+        document = read_json(lang)
+        if not document.get('dialogue_groups') and not document.get('overlay_texts') and output.is_file():
+            continue
         patches = stage / 'patches' / relative.with_name(relative.name + '.patch.json')
         for required in (source, info, lang):
             if not required.is_file(): raise FileNotFoundError(required)
@@ -77,7 +80,7 @@ def main():
         result = subprocess.run(task[-1], capture_output=True, text=True,
                                 encoding='utf-8', errors='replace', env=environment)
         return task, result
-    with ThreadPoolExecutor(max_workers=min(args.jobs, len(tasks))) as executor:
+    with ThreadPoolExecutor(max_workers=max(1, min(args.jobs, len(tasks)))) as executor:
         futures = [executor.submit(encode, task) for task in tasks]
         for index, future in enumerate(as_completed(futures), 1):
             task, result = future.result()
@@ -114,8 +117,9 @@ def main():
         for entry in container['entries']:
             entry['source'] = str(paths.korean_unpacked / Path(entry['source']).relative_to(unpacked))
     write_json(paths.korean / 'container-build-report.json', container_report)
-    build_boot(paths.root)
-    if not args.no_dosbox_x: deploy(paths.root)
+    if not args.no_dosbox_x:
+        build_boot(paths.root)
+        deploy(paths.root)
     print(f"Built {len(results)} MES and {container_report['container_count']} containers; "
           f"runtime deployed={not args.no_dosbox_x}")
     return 0

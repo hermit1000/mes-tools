@@ -71,3 +71,27 @@ def test_control_10_preserves_compressed_first_character():
 
     assert tokens[1]["bytes"] == [0x2A, 0x00]
     assert next(token for token in tokens if token["type"] == "text")["value"] == "と"
+
+
+def test_control_10_before_mada_keeps_ma_as_text():
+    tokens = decode_ballade_mes(bytes.fromhex("10 2A 03 6A 4C 89 BD"))
+
+    assert tokens[1]["bytes"] == [0x2A, 0x03]
+    assert tokens[2]["offset"] == 3
+    assert tokens[2]["bytes"] == [0x6A]
+
+
+def test_control_0e_before_meryl_keeps_first_sjis_character():
+    tokens = decode_ballade_mes(bytes.fromhex("A2 0E 2C 83 81 83 8A 83 8B"))
+
+    assert tokens[1]["bytes"] == [0x0E, 0x2C]
+    assert tokens[2]["offset"] == 3
+    assert tokens[2]["bytes"] == [0x83, 0x81]
+
+
+def test_control_10_before_ussura_keeps_u_as_text():
+    tokens = decode_ballade_mes(bytes.fromhex("10 2A 00 32 4F 45 75"))
+
+    assert tokens[1]["bytes"] == [0x2A, 0x00]
+    assert tokens[2]["offset"] == 3
+    assert tokens[2]["bytes"] == [0x32]

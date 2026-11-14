@@ -1,5 +1,9 @@
 # Ballade GPC 디코딩
 
+작업 공간 원본을 이용한 GPA 왕복 검증과 인용 문자열 리뷰 근거는
+[md/review_evidence.md](md/review_evidence.md)에 기록한다. 인물·대사 번역 기준은
+[md/Maria_translation_analysis.md](md/Maria_translation_analysis.md)를 참고한다.
+
 코드폴더에서 Conda `base` Python으로 실행한다.
 
 ```powershell

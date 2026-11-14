@@ -10,11 +10,15 @@ FORCED_DBCS_TOKEN = re.compile(r"\{([^{}])\}")
 NOOP_TOKEN = re.compile(r"\{채움\}")
 HALF_SPACE_TOKEN = re.compile(r"\{반각공백\}")
 EXPLICIT_TOKEN = re.compile(FORCED_DBCS_TOKEN.pattern + "|" + NOOP_TOKEN.pattern + "|" + HALF_SPACE_TOKEN.pattern)
-DISPLAY_TOKEN = re.compile(INLINE_TOKEN.pattern + "|" + EXPLICIT_TOKEN.pattern)
+DISPLAY_TOKEN = re.compile(INLINE_TOKEN.pattern + "|" + EXPLICIT_TOKEN.pattern + r"|\{대사끝\}")
 
 
 DEFAULT_LINE_COLUMNS = 28
-VISIBLE_GAIJI_COLUMNS = {"{외자:EC6A}": 1, "{외자:EC6B}": 1}
+VISIBLE_GAIJI_COLUMNS = {
+    "{외자:EC45}": 1, "{외자:EC44}": 1,
+    "{외자:EC62}": 1, "{외자:EC63}": 1, "{외자:EC64}": 1,
+    "{외자:EC6A}": 1, "{외자:EC6B}": 1,
+}
 
 
 def default_token_width(token: str) -> float:
@@ -31,9 +35,17 @@ def display_columns(text: str, token_widths: dict[str, int] | None = None) -> fl
     return count + sum(widths.get(match.group(), default_token_width(match.group())) - len(match.group()) for match in DISPLAY_TOKEN.finditer(text))
 
 
+def record_widths(record: dict, entries: dict, translated: bool) -> dict[str, int]:
+    widths = name_widths(record, entries, translated)
+    for macro in record.get("quoted_macros", []):
+        widths[macro["token" if translated else "original_token"]] = macro["width"]
+    return widths
+
+
 def strip_wrap_spaces(text: str, columns: int = DEFAULT_LINE_COLUMNS, start_column: int | None = 0,
                       token_widths: dict[str, int] | None = None,
-                      unknown_tokens: set[str] | None = None) -> tuple[str, int | None]:
+                      unknown_tokens: set[str] | None = None,
+                      wrap_at_space: bool = False) -> tuple[str, int | None]:
     """Drop spaces at automatic wrap boundaries, keeping internal spaces."""
     result = []
     column = start_column
@@ -47,6 +59,10 @@ def strip_wrap_spaces(text: str, columns: int = DEFAULT_LINE_COLUMNS, start_colu
         cursor = match.end()
     units.extend((character, 0 if character == "」" else 1) for character in text[cursor:])
     for character, width in units:
+        if character == "{대사끝}":
+            result.append(character)
+            column = 0
+            continue
         if width is None:
             result.append(character)
             column = None
@@ -59,11 +75,15 @@ def strip_wrap_spaces(text: str, columns: int = DEFAULT_LINE_COLUMNS, start_colu
             continue
         if column >= columns:
             if character in (" ", "\u3000"):
+                if wrap_at_space:
+                    column = 0
                 continue
-            column = 0
+            if not wrap_at_space:
+                column = 0
         result.append(character)
         total = column + width
-        column = total - columns * math.ceil((total - columns) / columns) if total > columns else total
+        column = (total - columns * math.ceil((total - columns) / columns)
+                  if total > columns and not wrap_at_space else total)
     return "".join(result), column
 
 
@@ -73,6 +93,8 @@ def translation_texts(info: dict, lang: dict) -> dict[str, str]:
     entries = {entry["offset"]: entry for entry in lang["entries"]}
     texts = {}
     column = 0
+    map_text = info["source"].upper().endswith("_MAP.MES")
+    columns = 20 if map_text else DEFAULT_LINE_COLUMNS
     for record in info["records"]:
         if record["type"] != "text":
             column = 0
@@ -81,22 +103,27 @@ def translation_texts(info: dict, lang: dict) -> dict[str, str]:
         translation = entry.get("translation", "")
         if not translation or translation == "@keep" or translation == record["original"]:
             if column is not None:
-                if GAIJI_TOKEN.search(record["original"]):
+                if any(match.group() not in VISIBLE_GAIJI_COLUMNS for match in GAIJI_TOKEN.finditer(record["original"])):
                     column = None
                 else:
-                    total = column + display_columns(record["original"], name_widths(record, entries, False))
-                    column = (total - 1) % DEFAULT_LINE_COLUMNS + 1 if total else 0
+                    total = column + display_columns(record["original"], record_widths(record, entries, False))
+                    column = (total - 1) % columns + 1 if total and not map_text else total
         elif "ascii" in record.get("encodings", []):
             texts[record["offset"]] = translation
             column = 0
         else:
-            unknown = {part["token"] for part in record.get("preserved_text", []) if GAIJI_TOKEN.search(part["original"])}
+            unknown = {part["token"] for part in record.get("preserved_text", [])
+                       if any(match.group() not in VISIBLE_GAIJI_COLUMNS
+                              for match in GAIJI_TOKEN.finditer(part["original"]))}
             for macro in record.get("encoding_macros", record.get("inline_macros", [])):
-                if GAIJI_TOKEN.search(macro["original_name"]) or GAIJI_TOKEN.search(macro["translated_name"]):
+                if any(match.group() not in VISIBLE_GAIJI_COLUMNS
+                       for value in (macro["original_name"], macro["translated_name"])
+                       for match in GAIJI_TOKEN.finditer(value)):
                     unknown.update((macro["token"], macro["original_token"]))
-            texts[record["offset"]], column = strip_wrap_spaces(translation, start_column=column,
-                                                              token_widths=name_widths(record, entries, True),
-                                                              unknown_tokens=unknown)
+            texts[record["offset"]], column = strip_wrap_spaces(translation, columns=columns,
+                                                              start_column=entry.get("wrap_start_column", column),
+                                                              token_widths=record_widths(record, entries, True),
+                                                              unknown_tokens=unknown, wrap_at_space=map_text)
     return texts
 
 
@@ -141,14 +168,17 @@ def reviewed_lines(info: dict, lang: dict) -> list[dict]:
             if record["type"] == "gaiji" or "ascii" in record.get("encodings", []):
                 widths_known = False
                 continue
-            if GAIJI_TOKEN.search(record["original"]):
+            if any(match.group() not in VISIBLE_GAIJI_COLUMNS
+                   for match in GAIJI_TOKEN.finditer(record["original"])):
                 widths_known = False
             for macro in record.get("inline_macros", []):
-                if GAIJI_TOKEN.search(macro["original_name"]) or GAIJI_TOKEN.search(macro["translated_name"]):
+                if any(match.group() not in VISIBLE_GAIJI_COLUMNS
+                       for value in (macro["original_name"], macro["translated_name"])
+                       for match in GAIJI_TOKEN.finditer(value)):
                     widths_known = False
-            original_columns += display_columns(record["original"], name_widths(record, entries, False))
-            translated_columns += display_columns(effective.get(offset, record["original"]), name_widths(record, entries, True))
-            if any(match.group() not in name_widths(record, entries, True) for match in NAME_TOKEN.finditer(effective.get(offset, record["original"]))):
+            original_columns += display_columns(record["original"], record_widths(record, entries, False))
+            translated_columns += display_columns(effective.get(offset, record["original"]), record_widths(record, entries, True))
+            if any(match.group() not in record_widths(record, entries, True) for match in NAME_TOKEN.finditer(effective.get(offset, record["original"]))):
                 widths_known = False
         original_rows = max(1, math.ceil(original_columns / line["max_columns"]))
         translated_rows = max(1, math.ceil(translated_columns / line["max_columns"]))

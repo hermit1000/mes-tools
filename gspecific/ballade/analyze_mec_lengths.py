@@ -49,6 +49,8 @@ def check_file(workspace: Path, name: str, codes: dict[str, str], compact: dict[
         if "ascii" in record.get("encodings", []):
             continue
         original_size = len(bytes.fromhex(record["raw_hex"]))
+        if non_display := entry.get("leading_non_display_bytes"):
+            original_size -= len(bytes.fromhex(non_display))
         try:
             encoded = encode_inline_names(
                 effective.get(entry["offset"], translation), record,

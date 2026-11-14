@@ -46,8 +46,9 @@ all matching container resources; pass `HD/MARIA21/MARIA.022/301_18A.MEC` to
 select one. `--refresh-unpacked` re-extracts original resources.
 
 `encode_batch` writes encoded resources to `kor-pc98-cd-unpacked`, repacks the
-original containers into `kor-pc98-cd/HD`, then copies them to
-`kor-pc98-dosbox-x-cd/HD`. Failed resources remain original in the repack.
+original containers, and places only changed files in `kor-pc98-cd/HD`.
+`kor-pc98-dosbox-x-cd/HD` is a complete runtime copy of the original HD files
+with the changed files overlaid. Failed resources remain original in the repack.
 The build report is `kor-pc98-cd/encode_report.json`. `--dry-run` validates
 without writing; `--no-repack` updates only unpacked resources.
 

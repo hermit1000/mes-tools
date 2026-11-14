@@ -22,6 +22,9 @@ def deploy(workspace: Path):
     save_bytes(modified_fd / "SHELL21.CNF", source_config.replace(OLD_START, HDD_START))
     save_bytes(modified_fd / "AUTOEXEC.BAT", (original_fd / "AUTOEXEC.BAT").read_bytes())
     image = build_boot(paths.root)
+    for source in (paths.original / "HD").rglob("*"):
+        if source.is_file():
+            save_bytes(paths.runtime / source.relative_to(paths.original), source.read_bytes())
     for source in (paths.korean / "HD").rglob("*"):
         if source.is_file():
             save_bytes(paths.runtime / source.relative_to(paths.korean), source.read_bytes())
